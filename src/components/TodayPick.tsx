@@ -52,10 +52,10 @@ export function TodayPick({ bottles, onOpen, onMarkWorn }: TodayPickProps) {
   return (
     <section className="today">
       <header className="today-header">
-        <p className="eyebrow">Today</p>
+        <p className="eyebrow">Daily pick</p>
         <h1 className="display">What should I wear?</h1>
         <p className="lede">
-          Tap weather, occasion, and mood — get your top bottles with why they fit.
+          Three taps — weather, occasion, mood — then your top bottles, ranked with reasons.
         </p>
       </header>
 

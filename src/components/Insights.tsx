@@ -44,9 +44,9 @@ export function Insights({ bottles, onOpen }: InsightsProps) {
       <header className="section-header">
         <div>
           <p className="eyebrow">Rotation</p>
-          <h1 className="display">Insights</h1>
+          <h1 className="display">How you wear</h1>
           <p className="lede">
-            {stats.totalWears} total wears · {stats.neverWorn.length} never worn
+            {stats.totalWears} wears logged · {stats.neverWorn.length} still waiting
           </p>
         </div>
       </header>

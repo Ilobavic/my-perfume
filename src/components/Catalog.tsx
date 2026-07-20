@@ -53,8 +53,8 @@ export function Catalog({ bottles, onOpen, onAdd, onReset }: CatalogProps) {
       <header className="section-header">
         <div>
           <p className="eyebrow">Collection</p>
-          <h1 className="display">Full catalog</h1>
-          <p className="lede">{bottles.length} bottles · filter and sort</p>
+          <h1 className="display">Your bottles</h1>
+          <p className="lede">{bottles.length} in rotation — filter by family, season, or sweetness.</p>
         </div>
         <button type="button" className="btn primary" onClick={onAdd}>
           Add bottle

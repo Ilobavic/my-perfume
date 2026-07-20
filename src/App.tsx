@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { Perfume, View } from './types'
 import { loadCatalog, resetCatalog, saveCatalog, todayISO } from './lib/storage'
 import { TodayPick } from './components/TodayPick'
@@ -10,6 +10,13 @@ import { Insights } from './components/Insights'
 export default function App() {
   const [bottles, setBottles] = useState<Perfume[]>(() => loadCatalog())
   const [view, setView] = useState<View>({ name: 'today' })
+  const [toast, setToast] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!toast) return
+    const t = window.setTimeout(() => setToast(null), 2200)
+    return () => window.clearTimeout(t)
+  }, [toast])
 
   const persist = useCallback((next: Perfume[]) => {
     setBottles(next)
@@ -18,6 +25,7 @@ export default function App() {
 
   const markWorn = useCallback(
     (id: string) => {
+      const bottle = bottles.find((b) => b.id === id)
       persist(
         bottles.map((b) =>
           b.id === id
@@ -31,6 +39,7 @@ export default function App() {
             : b,
         ),
       )
+      setToast(bottle ? `Logged wear · ${bottle.name}` : 'Logged wear')
     },
     [bottles, persist],
   )
@@ -43,6 +52,7 @@ export default function App() {
         : [...bottles, bottle]
       persist(next)
       setView({ name: 'detail', id: bottle.id })
+      setToast(exists ? 'Bottle updated' : 'Bottle added')
     },
     [bottles, persist],
   )
@@ -51,6 +61,7 @@ export default function App() {
     (id: string) => {
       persist(bottles.filter((b) => b.id !== id))
       setView({ name: 'catalog' })
+      setToast('Bottle removed')
     },
     [bottles, persist],
   )
@@ -63,10 +74,9 @@ export default function App() {
       <div className="atmosphere" aria-hidden="true" />
       <header className="topbar">
         <button type="button" className="brand" onClick={() => setView({ name: 'today' })}>
-          <span className="brand-mark">P</span>
-          <span className="brand-name">Perfume Picker</span>
+          <span className="brand-mark">Perfume Picker</span>
         </button>
-        <nav className="nav">
+        <nav className="nav" aria-label="Primary">
           <button
             type="button"
             className={view.name === 'today' ? 'active' : ''}
@@ -114,6 +124,7 @@ export default function App() {
             onAdd={() => setView({ name: 'form' })}
             onReset={() => {
               persist(resetCatalog())
+              setToast('Catalog reset to seed')
             }}
           />
         )}
@@ -129,7 +140,7 @@ export default function App() {
         )}
 
         {view.name === 'detail' && !detailBottle && (
-          <p className="empty">Bottle not found.</p>
+          <p className="empty">That bottle isn’t in your catalog.</p>
         )}
 
         {view.name === 'form' && (
@@ -150,6 +161,12 @@ export default function App() {
           />
         )}
       </main>
+
+      {toast && (
+        <div className="toast" role="status">
+          {toast}
+        </div>
+      )}
     </div>
   )
 }
