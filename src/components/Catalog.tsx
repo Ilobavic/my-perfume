@@ -4,6 +4,20 @@ import { daysSince } from '../lib/storage'
 
 type SortKey = 'name' | 'sweetness' | 'lastWorn' | 'family'
 
+function getBottlePalette(value: string) {
+  const seed = value.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  const palettes = [
+    ['#5f7a4c', '#d9c07f'],
+    ['#6b4e3d', '#b97d4b'],
+    ['#3b5b4a', '#8f6f43'],
+    ['#5a3c6d', '#9271b5'],
+    ['#2f4f69', '#8b9d96'],
+    ['#8a423b', '#d4a373'],
+  ]
+
+  return palettes[seed % palettes.length]
+}
+
 interface CatalogProps {
   bottles: Perfume[]
   onOpen: (id: string) => void
@@ -113,6 +127,7 @@ export function Catalog({ bottles, onOpen, onAdd, onReset }: CatalogProps) {
       <div className="catalog-grid">
         {filtered.map((b) => {
           const days = daysSince(b.lastWorn)
+          const [accent, accentSoft] = getBottlePalette(b.name)
           return (
             <button
               key={b.id}
@@ -120,8 +135,22 @@ export function Catalog({ bottles, onOpen, onAdd, onReset }: CatalogProps) {
               className="catalog-card"
               onClick={() => onOpen(b.id)}
             >
-              <span className="house">{b.house}</span>
-              <span className="name">{b.name}</span>
+              <div className="catalog-title-row">
+                <div className="catalog-avatar" aria-hidden="true">
+                  <svg viewBox="0 0 80 112" role="img" aria-label={`${b.name} bottle illustration`}>
+                    <rect x="16" y="12" width="48" height="18" rx="8" fill={accent} />
+                    <rect x="24" y="28" width="32" height="58" rx="10" fill={accentSoft} />
+                    <rect x="18" y="84" width="44" height="16" rx="8" fill={accent} />
+                    <rect x="30" y="6" width="20" height="10" rx="4" fill={accent} />
+                    <path d="M29 46h22" stroke={accent} strokeWidth="3" strokeLinecap="round" />
+                    <path d="M29 60h22" stroke={accent} strokeWidth="3" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <div className="catalog-text-block">
+                  <span className="house">{b.house}</span>
+                  <span className="name">{b.name}</span>
+                </div>
+              </div>
               <span className="meta">
                 {b.family} · sweetness {b.sweetness}
               </span>
